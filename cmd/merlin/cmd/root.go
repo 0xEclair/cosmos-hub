@@ -44,7 +44,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
 		WithAccountRetriever(types.AccountRetriever{}).
-		WithHomeDir(gaia.DefaultNodeHome).
+		WithHomeDir(merlin.DefaultNodeHome).
 		// perhaps viper reads config.yml
 		WithViper("")
 	
@@ -94,7 +94,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(merlin.ModuleBasics, merlin.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, merlin.DefaultNodeHome),
-		genutilcli.GenTxCmd(merlin.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, gaia.DefaultNodeHome),
+		genutilcli.GenTxCmd(merlin.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, merlin.DefaultNodeHome),
 		genutilcli.ValidateGenesisCmd(merlin.ModuleBasics),
 		AddGenesisAccountCmd(merlin.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
