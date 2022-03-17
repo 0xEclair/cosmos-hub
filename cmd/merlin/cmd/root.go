@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"github.com/gravity-devs/liquidity/app"
 	"io"
 	"os"
 	"path/filepath"
@@ -205,4 +204,58 @@ func (ac appCreator) appExport(
 	}
 	
 	return merlinApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
+}
+
+func addModuleInitFlags(startCmd *cobra.Command) {
+	crisis.AddModuleInitFlags(startCmd)
+}
+
+func queryCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "query",
+		Aliases: []string{"q"},
+		Short: "Querying subcommands",
+		DisableFlagParsing: true,
+		SuggestionsMinimumDistance: 2,
+		RunE: client.ValidateCmd,
+	}
+	
+	cmd.AddCommand(
+		authcmd.GetAccountCmd(),
+		rpc.ValidatorCommand(),
+		rpc.BlockCommand(),
+		authcmd.QueryTxsByEventsCmd(),
+		authcmd.QueryTxCmd(),
+	)
+	merlin.ModuleBasics.AddQueryCommands(cmd)
+	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
+	
+	return cmd
+}
+
+func txCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:                        "tx",
+		Short:                      "Transactions subcommands",
+		DisableFlagParsing:         true,
+		SuggestionsMinimumDistance: 2,
+		RunE:                       client.ValidateCmd,
+	}
+	
+	cmd.AddCommand(
+		authcmd.GetSignCommand(),
+		authcmd.GetSignBatchCommand(),
+		authcmd.GetMultiSignCommand(),
+		authcmd.GetMultiSignBatchCmd(),
+		authcmd.GetValidateSignaturesCommand(),
+		flags.LineBreak,
+		authcmd.GetBroadcastCommand(),
+		authcmd.GetEncodeCommand(),
+		authcmd.GetDecodeCommand(),
+	)
+	
+	merlin.ModuleBasics.AddTxCommands(cmd)
+	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
+	
+	return cmd
 }
